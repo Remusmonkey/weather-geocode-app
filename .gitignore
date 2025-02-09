@@ -1,0 +1,11 @@
+.venv/
+venv/
+
+# Ignore environment variables
+.env
+
+# Ignore Python cache files
+__pycache__/
+.idea/
+.DS_Store
+*.iml
