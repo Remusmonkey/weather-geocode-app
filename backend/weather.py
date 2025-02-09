@@ -21,9 +21,15 @@ def get_weather(lat, long):
     try:
         response = requests.get(REALTIME_WEATHER_URL, params=params, headers=headers)
         response.raise_for_status()
-        weather_data = response.json()
+
+        data = response.json()
         #print(f"Weather API Response: {weather_data}")  # Debugging log
-        return weather_data
+        filtered_data = {
+            "temperature": data["data"]["values"].get("temperature"),
+            "temperatureApparent": data["data"]["values"].get("temperatureApparent"),
+            "weather_code": data["data"]["values"].get("weatherCode")
+        }
+        return filtered_data
     except requests.exceptions.RequestException as e:
         return {"error": f"API request failed: {e}"}, 500
 
