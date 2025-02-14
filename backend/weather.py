@@ -34,7 +34,7 @@ def get_weather(lat, long):
             "weather_description": get_weather_description(weather_code)
         }
         return filtered_data
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException as e:  #region RequestException was used because it will handle ambiguous exceptions and let me know what that exception was in the next line #endregion
         return {"error": f"API request failed: {e}"}, 500
 
 def get_weather_description(weather_code: int) -> str:

@@ -8,7 +8,7 @@ CORS(app)
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s:%(message)s")
 
 @app.route('/geocode', methods= ['GET'])
-def geocode():
+def get_geocode():
     location = request.args.get('location')
     print(location)
     if not location:
@@ -17,7 +17,7 @@ def geocode():
     return jsonify(local_data)
 
 @app.route('/weather', methods = ['GET'])
-def realtime_weather():
+def get_realtime_weather():
     latitude = request.args.get('lat')
     longitude = request.args.get('lon')
     logging.debug(f"Received request for weather with lat: {latitude}, lon: {longitude}")
