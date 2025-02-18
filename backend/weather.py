@@ -25,6 +25,7 @@ def get_weather(lat, long):
         response.raise_for_status()
 
         data = response.json()
+        logging.debug(f"Weather code raw response: {data}")
         weather_code =  data["data"]["values"].get("weatherCode")
         #print(f"Weather API Response: {weather_data}")  # Debugging log
         filtered_data = {
