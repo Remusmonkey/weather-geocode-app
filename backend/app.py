@@ -14,7 +14,12 @@ def get_geocode():
     if not location:
         return jsonify({"error": "Missing location parameter"}), 400
     local_data = get_location_data(location)
-    return jsonify(local_data)
+    if isinstance(local_data, list):
+        return {
+            "results": local_data
+        }
+    else:
+        return jsonify(local_data)
 
 @app.route('/weather', methods = ['GET'])
 def get_realtime_weather():
