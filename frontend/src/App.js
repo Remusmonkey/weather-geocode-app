@@ -7,34 +7,49 @@ function App() {
     const [error, setError] = useState("");  // Stores error messages
     const [selectedLocation, setSelectedLocation] = useState(null); // Stores user-selected location
 
-    const handleSearch = async () => {
-        setError("");  // Reset errors
-        setGeocodeData(null);
-        setWeatherData(null);
-        setSelectedLocation(null);
+const handleSearch = async () => {
+    setError("");  // Clear previous errors
+    setGeocodeData(null);
+    setWeatherData(null);
+    setSelectedLocation(null);
 
-        try {
-            // Fetch Geocode Data
-            const geocodeResponse = await fetch(`http://127.0.0.1:5000/geocode?location=${location}`);
-            const geocodeResult = await geocodeResponse.json();
+    try {
+        // Try fetching geocode data
+        const geocodeResponse = await fetch(`http://127.0.0.1:5000/geocode?location=${location}`);
 
-            // If multiple locations are returned
-            if (geocodeResult.results) {
-                setGeocodeData(geocodeResult.results); // Store the list of locations
-                return; // Stop execution so user can pick a location
-            }
-
-            // If only one location is found, fetch weather immediately
-            if (geocodeResult.latitude && geocodeResult.longitude) {
-                setGeocodeData([geocodeResult]); // Wrap in array for consistency
-                fetchWeather(geocodeResult.latitude, geocodeResult.longitude);
-            } else {
-                setError("Location not found. Please try again.");
-            }
-        } catch (err) {
-            setError("Error fetching geocode data. Please try again.");
+        if (!geocodeResponse.ok) {
+            throw new Error(`Server error: ${geocodeResponse.status}`);
         }
-    };
+
+        const geocodeResult = await geocodeResponse.json();
+
+        // Handle multiple locations
+        if (geocodeResult.results) {
+            setGeocodeData(geocodeResult.results);
+            return;
+        }
+
+        // Handle single location
+        if (geocodeResult.latitude && geocodeResult.longitude) {
+            setGeocodeData([geocodeResult]);
+            fetchWeather(geocodeResult.latitude, geocodeResult.longitude);
+        } else {
+            setError("Location not found. Please try again.");
+        }
+
+    } catch (err) {
+        console.error("Geocode fetch error:", err);
+
+        if (err.message.includes("Failed to fetch")) {
+            setError("Cannot connect to the server. Is Flask running?");
+        } else if (err.message.includes("Server error")) {
+            setError(`Server error: ${err.message}`);
+        } else {
+            setError("Unexpected error occurred. Please try again.");
+        }
+    }
+};
+
 
     const fetchWeather = async (lat, lon) => {
         try {
